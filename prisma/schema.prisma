@@ -13,30 +13,82 @@ datasource db {
   url = env("DATABASE_URL")
 }
 
-model User{
+model Account{
   id Int @id @default(autoincrement())
-  username String
-  courses Course[]
+  userId Int @map("user_id")
+  type String
+  provider String
+  providerAccountId String
+  refresh_token String? @db.Text
+  access_token String? @db.Text
+  expires_at Int?
+  token_type String?
+  scope String?
+  id_token String? @db.Text
+  session_state String?
+
+  user User @relation(fields:[userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session{
+  id Int @id @default(autoincrement())
+  sessionToken String @unique @map("session_token")
+  userId Int @map("user_id")
+  expires DateTime
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  username      String?   @unique
+
+  accounts Account[]
+  sessions Session[]
+  courses  Course[]
+
+  @@map("users")
+}
+
+model VerificationToken{
+  identifier String
+  token String
+  expires DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }
 
 model Course{
   id Int @id @default(autoincrement())
   title String
   color String
-  studentId Int
+  studentId Int @map("student_id")
   student User @relation(fields: [studentId], references: [id])
   activities Activity[]
+
+  @@map("courses")
 }
 
 model Activity{
   id Int @id @default(autoincrement())
   title String
-  description String
-  color String
-  stateId Int
-  courseId Int
+  description String? @db.Text
+  color String?
+  stateId Int @map("state_id")
+  courseId Int @map("course_id")
   state State @relation(fields: [stateId], references: [id])
   course Course @relation(fields: [courseId], references: [id])
+
+  @@map("activities")
 }
 
 model State{
@@ -44,4 +96,6 @@ model State{
   name String
   color String
   activities Activity[]
+
+  @@map("states")
 }

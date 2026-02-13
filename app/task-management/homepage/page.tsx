@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import {Plus} from "lucide-react"
 import { colorMap, ColorKey } from "@/lib/colorMap"
+import { redirect } from "next/navigation"
+import { auth } from "@/lib/auth"
 
 type Task = {
   id: number
@@ -25,7 +27,13 @@ type Course = {
   studentId: number
 }
 
-export default function HomePage(){
+export default async function HomePage(){
+  const session = await auth()
+
+  if (!session) {
+    return redirect("/login")
+  }
+
   const [tasks, setTasks] = useState<Task[]>([])
   const [states, setStates] = useState<State[]>([])
   const [courses, setCourses] = useState<Course[]>([])

@@ -7,11 +7,19 @@ export async function GET(){
 }
 
 export async function POST(request: NextRequest){
-    const {username} = await request.json()
+    const {username, email} = await request.json()
+
+    if (!username || !email) {
+        return NextResponse.json(
+            { error: 'Username e email são obrigatórios' },
+            { status: 400 }
+        )
+    }
 
     const user = await prisma.user.create({
         data: {
-            username
+            username,
+            email
         }
     })
 

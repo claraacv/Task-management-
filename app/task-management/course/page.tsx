@@ -32,7 +32,7 @@ export default function Course(){
     }, [])
 
     return (
-        <div className="p-5">
+        <div className="p-5 lg:grid lg:grid-cols-2 xl:gap-3 xl:grid-cols-3">
             {courses.map((course) => {
                 const colors = colorMap[course.color]
 
