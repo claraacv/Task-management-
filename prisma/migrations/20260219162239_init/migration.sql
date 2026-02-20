@@ -72,6 +72,7 @@ CREATE TABLE "states" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "color" TEXT NOT NULL,
+    "student_id" INTEGER NOT NULL,
 
     CONSTRAINT "states_pkey" PRIMARY KEY ("id")
 );
@@ -105,3 +106,6 @@ ALTER TABLE "activities" ADD CONSTRAINT "activities_state_id_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "activities" ADD CONSTRAINT "activities_course_id_fkey" FOREIGN KEY ("course_id") REFERENCES "courses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "states" ADD CONSTRAINT "states_student_id_fkey" FOREIGN KEY ("student_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

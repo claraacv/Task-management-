@@ -23,13 +23,29 @@ export async function GET(){
 }
 
 export async function POST(request: NextRequest){
-    const {title, color, studentId} = await request.json()
+    const {title, color} = await request.json()
+
+    const session = await auth()
+
+    if(!session?.user?.email){
+        return NextResponse.json({message: "The user was is not authorized"})
+    }
+
+    const user = await prisma.user.findUnique({
+        where:{
+            email: session.user.email
+        }
+    })
+
+    if(!user){
+        return NextResponse.json({message: "User not found"}, {status: 404})
+    }
 
     const course = await prisma.course.create({
         data: {
             title,
             color,
-            studentId
+            studentId: user.id
         }
     })
 

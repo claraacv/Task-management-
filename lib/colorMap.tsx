@@ -1,4 +1,13 @@
 export const colorMap = {
+  default:{
+    bg: "bg-[#0A3E41]",
+    border: "border-[#0A3E41]",
+    task: "bg-[#0A3E41]",
+    button: "bg-[#0A3E41]",
+    text: "text-white",
+    shadow: "shadow-[#0A3E41]",
+    course: "bg-[#0A3E41]"
+  },
   teal:{
     bg: "bg-teal-600/40",
     border: "border-teal-300",
@@ -200,3 +209,9 @@ export const colorMap = {
 } as const
 
 export type ColorKey = keyof typeof colorMap
+export const allColors = Object.entries(colorMap).map(
+  ([key, value]) => ({
+    key: key as ColorKey,
+    ...value
+  })
+)

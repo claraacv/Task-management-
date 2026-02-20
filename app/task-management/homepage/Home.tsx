@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import {Plus} from "lucide-react"
 import { colorMap, ColorKey } from "@/lib/colorMap"
+import { CoursePopup } from "@/components/modal/CoursePopup"
 
 type Task = {
   id: number
@@ -31,6 +32,33 @@ export default function Home(){
   const [courses, setCourses] = useState<Course[]>([])
   const [state, setState] = useState("")
   const [showState, setShowState] = useState(false)
+  const [createCourse, setCreateCourse] = useState(false)
+  const [course, setCourse] = useState("")
+  const [newTask, setNewTask] = useState<Number | null>(null)
+  const [task, setTask] = useState("")
+  const [selectedCourse, setSelectedCourse] = useState("")
+
+  async function addTask(idState: Number){
+    try{
+      if(task == ""){
+        setNewTask(idState)
+        return
+      } 
+
+      if(!task) return
+
+      const response = await fetch("api/activity", {
+        method: "POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({title: task, stateId: idState, courseId: selectedCourse})
+      })
+
+      setNewTask(null)
+    }catch(err){
+      console.log("There was an error " + err);
+      
+    }
+  }
 
   async function createState(){
     try{
@@ -132,8 +160,37 @@ export default function Home(){
                     </div>
                 ))}
               </div>
+              {newTask === state.id && (
+                <div className="pr-5 pt-5 pl-5">
+                  <input 
+                    type="text"
+                    value={task}
+                    onChange={(e) => setTask(e.target.value)}
+                    placeholder="Digite o nome da tarefa..."
+                    className="border-1 rounded-md w-full p-3 mb-3"
+                  />
+                  <select 
+                    name="" 
+                    id=""
+                    value={selectedCourse}
+                    onChange={(e) => setSelectedCourse(e.target.value)}
+                  >
+                    <option value="">Selecione uma matéria</option>
+                    {courses.map((course) => (
+                      <option value={course.id} key={course.id}>
+                        {course.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div className="p-5 mt-auto">
-                <button className={`${colors.button} p-3 w-full items-center rounded-xl ${colors.text} font-bold`}>Adicionar</button>
+                <button 
+                  className={`${colors.button} p-3 w-full items-center rounded-xl ${colors.text} font-bold`}
+                  onClick={() => addTask(state.id)}
+                >
+                  Adicionar
+                  </button>
               </div>
             </div>
             )
@@ -156,26 +213,38 @@ export default function Home(){
           )}
           <div 
           onClick={() => setShowState(!showState)}
-          className="bg-teal-100/40 p-3 w-[320px] shrink-0 items-center rounded-xl text-white font-bold flex flex-row">
+          className="bg-[#0A3E41] p-3 w-[320px] shrink-0 items-center rounded-xl text-white font-bold flex flex-row">
             <Plus className="font-bold mr-2"></Plus>
             Adicionar novo estado
           </div>
         </div>
         <div className="text-white mt-5">
           <h3 className="font-bold">Matérias escolares</h3>
-          <div className="flex flex-row flex-wrap gap-3 mt-3">
+          <div className="flex flex-row flex-wrap gap-5 mt-3 items-start">
             {courses.map(course => {
               const colors = colorMap[course.color]
-
               return (
                 <div 
                   key={course.id}
-                  className={`${colors.course} p-3 w-fit rounded-sm font-bold`}
+                  className={`${colors.course} p-3 rounded-sm font-bold w-[320px]`}
                 >
                   <p>{course.title}</p>
                 </div>
               )
             })}
+            {createCourse && (
+              <CoursePopup
+                onCancel={() => setCreateCourse(false)}
+                onCreate={() => {fetchCourses(); setCreateCourse(!createCourse)}}
+              ></CoursePopup>
+            )}
+            <div 
+              onClick={() => setCreateCourse(!createCourse)}
+              className="bg-[#0A3E41] p-3 w-[320px] items-center rounded-xl text-white font-bold flex flex-row"
+            >
+              <Plus className="font-bold mr-2"></Plus>
+              Adicionar nova matéria
+            </div>
           </div>
         </div>
       </div>

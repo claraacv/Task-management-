@@ -54,6 +54,7 @@ model User {
   accounts Account[]
   sessions Session[]
   courses  Course[]
+  states State[]
 
   @@map("users")
 }
@@ -82,7 +83,6 @@ model Activity{
   id Int @id @default(autoincrement())
   title String
   description String? @db.Text
-  color String?
   stateId Int @map("state_id")
   courseId Int @map("course_id")
   state State @relation(fields: [stateId], references: [id])
@@ -96,6 +96,8 @@ model State{
   name String
   color String
   activities Activity[]
+  studentId Int @map("student_id")
+  student User @relation(fields: [studentId], references: [id])
 
   @@map("states")
 }
