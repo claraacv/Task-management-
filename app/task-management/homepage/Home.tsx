@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import {Plus} from "lucide-react"
-import { colorMap, ColorKey } from "@/lib/colorMap"
 import { CoursePopup } from "@/components/modal/CoursePopup"
+import { allColors, colorMap, ColorKey } from "@/lib/colorMap"
+import { Plus } from "lucide-react"
 
 type Task = {
   id: number
@@ -37,6 +37,7 @@ export default function Home(){
   const [newTask, setNewTask] = useState<Number | null>(null)
   const [task, setTask] = useState("")
   const [selectedCourse, setSelectedCourse] = useState("")
+  const [selectedColor, setSelectedColor] = useState<ColorKey>("default")
 
   async function addTask(idState: Number){
     try{
@@ -47,13 +48,17 @@ export default function Home(){
 
       if(!task) return
 
-      const response = await fetch("api/activity", {
+      const response = await fetch("/api/activity", {
         method: "POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({title: task, stateId: idState, courseId: selectedCourse})
       })
 
       setNewTask(null)
+
+      fetchStates()
+      fetchTasks()
+      fetchCourses()
     }catch(err){
       console.log("There was an error " + err);
       
@@ -67,7 +72,7 @@ export default function Home(){
         const response = await fetch("/api/state", {
             method: "POST",
             headers:{"Content-Type":"application/json"},
-            body: JSON.stringify({name: state, color: "teal"})
+            body: JSON.stringify({name: state, color: selectedColor})
         })
 
         console.log(response);
@@ -206,6 +211,15 @@ export default function Home(){
                     placeholder="Digite aqui o nome do estado..."
                     className="flex p-3 border-1 mt-3 ml-3 mr-3 rounded-md"
                 />
+                <div className="flex flex-row flex-wrap gap-2 p-3 items-center justify-center">
+                                    {allColors.map(color => (
+                                        <div 
+                                        key={color.key}
+                                        className={`${color.course} w-5 h-5 border-1 rounded-sm border-amber-100 ${selectedColor === color.key ? "ring-2 ring-white" : ""}`}
+                                        onClick={() => setSelectedColor(color.key)}
+                                        ></div>
+                                    ))}
+                                </div>
               <div id="createStateBtn" className="p-3 mt-auto">
                 <button className={`teal p-3 w-full items-center rounded-xl bg-teal-300 text-black font-bold teal-`} onClick={createState}>Adicionar estado</button>
               </div>
