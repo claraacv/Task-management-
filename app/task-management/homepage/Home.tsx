@@ -38,6 +38,7 @@ export default function Home(){
   const [task, setTask] = useState("")
   const [selectedCourse, setSelectedCourse] = useState("")
   const [selectedColor, setSelectedColor] = useState<ColorKey>("default")
+  const previewColors = colorMap[selectedColor]
 
   async function addTask(idState: Number){
     try{
@@ -202,7 +203,7 @@ export default function Home(){
           })}
           {showState && (
             <div 
-              className={`flex flex-col w-[320px] shrink-0 bg-teal-600/40 rounded-lg max-h-100 shadow-lg text-white mb-3`}
+              className={`flex flex-col w-[320px] shrink-0 rounded-lg max-h-100 shadow-lg text-white mb-3 ${previewColors.bg}`}
         >
                 <input 
                     type="text" 
@@ -221,7 +222,7 @@ export default function Home(){
                                     ))}
                                 </div>
               <div id="createStateBtn" className="p-3 mt-auto">
-                <button className={`teal p-3 w-full items-center rounded-xl bg-teal-300 text-black font-bold teal-`} onClick={createState}>Adicionar estado</button>
+                <button className={`${previewColors.button} ${previewColors.text} p-3 w-full rounded-xl font-bold`} onClick={createState}>Adicionar estado</button>
               </div>
         </div>
           )}
