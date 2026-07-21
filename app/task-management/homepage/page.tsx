@@ -5,6 +5,8 @@ import Home from "./Home"
 export default async function HomePage(){
   const session = await auth()
 
+  console.log("SESSION:", session);
+
   if (!session) {
     return redirect("/login")
   }

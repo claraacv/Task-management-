@@ -7,11 +7,17 @@ import Credentials from "next-auth/providers/credentials";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+
+  session: {
+    strategy: "jwt",
+  },
+
   providers: [
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID!,
       clientSecret: process.env.AUTH_GITHUB_SECRET!,
     }),
+
     Credentials({
       name: "credentials",
 
@@ -27,7 +33,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: {
-            email: credentials.email,
+            email: credentials.email as string,
           },
         });
 
@@ -52,12 +58,30 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       },
     }),
   ],
+
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+      }
+
+      return session;
+    },
+
     async signIn({ user, account }) {
       console.log("SIGNIN", user?.email, account?.provider);
       return true;
     },
   },
+
   secret: process.env.NEXTAUTH_SECRET,
   debug: true,
 });
