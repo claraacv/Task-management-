@@ -38,7 +38,7 @@ export default function Course(){
                 const colors = colorMap[course.color]
 
                 return(
-                    <Link href={`/course/${course.id}`} key={course.id}>
+                    <Link href={`/task-management/course/${course.id}`} key={course.id}>
                         <div className={`${colors.course} rounded-xl text-white p-3 mb-3`}>
                             <h3>{course.title}</h3>
                         </div>

@@ -1,38 +1,75 @@
-import { useState } from "react";
+"use client"
 
-type PageProps = {
-  params: {
-    id: string
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { Task, Course, State } from "@/app/types";
+import StateComp from "@/components/kanban/StateComp";
+
+export default function TasksPerCourse() {
+  const [states, setStates] = useState<State[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [newTask, setNewTask] = useState<number | null>(null);
+  const [task, setTask] = useState("");
+  const params = useParams();
+  const id = params.id;
+
+  async function fetchStates() {
+    try {
+      const states = await fetch(`/api/state`, {});
+      setStates(await states.json());
+    } catch (err) {
+      console.log("There was an error " + err);
+    }
   }
+
+  async function fetchTasks() {
+    try {
+        console.log(params);
+console.log(id);
+      const tasks = await fetch(`/api/activity?courseId=${id}`, {});
+      setTasks(await tasks.json());
+    } catch (err) {}
+  }
+
+  async function addTask(stateId: number) {
+  if (task === "") {
+    setNewTask(stateId);
+    return;
+  }
+
+  await fetch("/api/activity", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title: task,
+      stateId,
+      courseId: Number(id),
+    }),
+  });
+
+  setTask("");
+  setNewTask(null);
+  fetchTasks();
 }
 
-export default function TasksPerCourse({ params }: PageProps){
-    const [states, setStates] = useState([])
-    const [tasks, setTasks] = useState([])
-    const {id} = params
+  useEffect(() => {
+    fetchStates();
+    fetchTasks();
+  }, []);
 
-    async function fetchStates(){
-        try{
-            const states = await fetch("/api/activity", {
-
-            })
-
-        } catch(err){
-            console.log("There was an error " + err);
-            
-        }
-    }
-
-    function fetchTasks(){
-
-    }
-
-    return(
-        <div>
-            <h2></h2>
-            <div>
-
-            </div>
-        </div>
-    )
+  return (
+    <div className="p-5 lg:grid lg:grid-cols-2 xl:gap-3 xl:grid-cols-3">
+      <StateComp
+        tasks={tasks}
+        states={states}
+        showCourseSelect={false}
+        newTask={newTask}
+        task={task}
+        setTask={setTask}
+        addTask={addTask}
+      ></StateComp>
+    </div>
+  );
 }
