@@ -36,7 +36,7 @@ export default function StateComp({
         return (
           <div
             key={state.id}
-            className={`flex flex-col w-[320px] shrink-0 ${colors.bg} rounded-lg max-h-100 shadow-lg text-white mb-3`}
+            className={`flex flex-col w-[320px] shrink-0 ${colors.bg} rounded-lg max-h-screen shadow-lg text-white mb-3`}
           >
             <div
               className={`flex justify-center p-3 border-b-3 ${colors.border}`}
