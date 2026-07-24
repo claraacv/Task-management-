@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -12,6 +12,7 @@ export default function TasksPerCourse() {
   const [task, setTask] = useState("");
   const params = useParams();
   const id = params.id;
+  const [course, setCourse] = useState<Course | null>(null);
 
   async function fetchStates() {
     try {
@@ -24,43 +25,53 @@ export default function TasksPerCourse() {
 
   async function fetchTasks() {
     try {
-        console.log(params);
-console.log(id);
+      console.log(params);
+      console.log(id);
       const tasks = await fetch(`/api/activity?courseId=${id}`, {});
       setTasks(await tasks.json());
     } catch (err) {}
   }
 
   async function addTask(stateId: number) {
-  if (task === "") {
-    setNewTask(stateId);
-    return;
+    if (task === "") {
+      setNewTask(stateId);
+      return;
+    }
+
+    await fetch("/api/activity", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: task,
+        stateId,
+        courseId: Number(id),
+      }),
+    });
+
+    setTask("");
+    setNewTask(null);
+    fetchTasks();
   }
 
-  await fetch("/api/activity", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      title: task,
-      stateId,
-      courseId: Number(id),
-    }),
-  });
-
-  setTask("");
-  setNewTask(null);
-  fetchTasks();
-}
+  async function getCourse() {
+    try {
+      const response = await fetch(`/api/course/${id}`);
+      setCourse(await response.json());
+    } catch (err) {}
+  }
 
   useEffect(() => {
+    getCourse();
     fetchStates();
     fetchTasks();
   }, []);
 
   return (
-    <div className="p-5 lg:grid lg:grid-cols-2 xl:gap-3 xl:grid-cols-3">
+    <div className="p-5">
+      <h1 className="text-3xl font-bold">{course?.title}</h1>
+      <div className="lg:grid lg:grid-cols-2 xl:gap-3 xl:grid-cols-3">
       <StateComp
         tasks={tasks}
         states={states}
@@ -70,6 +81,7 @@ console.log(id);
         setTask={setTask}
         addTask={addTask}
       ></StateComp>
+    </div>
     </div>
   );
 }

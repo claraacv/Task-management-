@@ -144,7 +144,7 @@ export default function Home() {
         />
         <div
           onClick={() => setShowState(!showState)}
-          className="bg-[#0A3E41] p-3 w-[320px] shrink-0 items-center rounded-xl text-white font-bold flex flex-row"
+          className="bg-[#0A3E41] p-3 w-[320px] cursor-pointer shrink-0 items-center rounded-xl text-white font-bold flex flex-row"
         >
           <Plus className="font-bold mr-2"></Plus>
           Adicionar novo estado
@@ -175,7 +175,7 @@ export default function Home() {
           )}
           <div
             onClick={() => setCreateCourse(!createCourse)}
-            className="bg-[#0A3E41] p-3 w-[320px] items-center rounded-xl text-white font-bold flex flex-row"
+            className="bg-[#0A3E41] p-3 w-[320px] cursor-pointer items-center rounded-xl text-white font-bold flex flex-row"
           >
             <Plus className="font-bold mr-2"></Plus>
             Adicionar nova matéria

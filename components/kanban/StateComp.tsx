@@ -86,7 +86,7 @@ export default function StateComp({
 
             <div className="p-5 mt-auto">
               <button
-                className={`${colors.button} p-3 w-full items-center rounded-xl ${colors.text} font-bold`}
+                className={`${colors.button} p-3 w-full items-center cursor-pointer rounded-xl ${colors.text} font-bold`}
                 onClick={() => addTask(state.id)}
               >
                 Adicionar
